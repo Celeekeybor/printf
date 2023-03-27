@@ -1,35 +1,96 @@
-#include "holberton.h"
+#include "main.h"
 
 /**
- * _printf - Receives the main string and all the necessary parameters to
- * print a formated string
- * @format: A string containing all the desired characters
- * Return: A total count of the characters printed
+ * _putchar - writes a character to stdout
+ * @c: The character to print
+ *
+ * Return: 1 on success, -1 on error
+ */
+int _putchar(char c)
+{
+return (write(1, &c, 1));
+}
+
+/**
+ * print_char - Prints a character to stdout
+ * @args: A va_list containing a single character to print
+ *
+ * Return: The number of characters printed
+ */
+int print_char(va_list args)
+{
+char c = va_arg(args, int);
+return (_putchar(c));
+}
+
+/**
+ * print_string - Prints a string to stdout
+ * @args: A va_list containing a string to print
+ *
+ * Return: The number of characters printed
+ */
+int print_string(va_list args)
+{
+char *str = va_arg(args, char *);
+if (str == NULL)
+str = "(null)";
+int i = 0;
+while (str[i] != '\0')
+_putchar(str[i++]);
+return (i);
+}
+
+/**
+ * print_percent - Prints a percent sign to stdout
+ * @args: A va_list containing no arguments
+ *
+ * Return: The number of characters printed
+ */
+int print_percent(va_list args)
+{
+(void) args;
+return (_putchar('%'));
+}
+
+/**
+ * _printf - prints output according to a format
+ * @format: The format string
+ *
+ * Return: The number of characters printed
  */
 int _printf(const char *format, ...)
 {
-int printed_chars;
-conver_t f_list[] = {
-{"c", print_char},
-{"s", print_string},
-{"%", print_percent},
-{"d", print_integer},
-{"i", print_integer},
-{"b", print_binary},
-{"r", print_reversed},
-{"R", rot13},
-{"u", unsigned_integer},
-{"o", print_octal},
-{"x", print_hex},
-{"X", print_heX},
-{NULL, NULL}
-};
-va_list arg_list;
-if (format == NULL)
-return (-1);
-va_start(arg_list, format);
-/*Calling parser function*/
-printed_chars = parser(format, f_list, arg_list);
-va_end(arg_list);
-return (printed_chars);
+va_list args;
+int count = 0;
+va_start(args, format);
+while (*format)
+{
+if (*format == '%')
+{
+format++;
+switch (*format)
+{
+case 'c':
+count += print_char(args);
+break;
+case 's':
+count += print_string(args);
+break;
+case '%':
+count += print_percent(args);
+break;
+default:
+count += _putchar('%');
+count += _putchar(*format);
+break;
+}
+}
+else
+{
+count += _putchar(*format);
+}
+format++;
+}
+va_end(args);
+return (count);
 }
